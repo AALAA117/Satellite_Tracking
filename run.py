@@ -8,6 +8,7 @@ from os import environ
 
 
 app = Flask(__name__)
+app.register_blueprint(main)
 
 
 @app.errorhandler(404)

@@ -13,6 +13,6 @@ def get_sat(name):
 
     satellite = Base(name)
     norad_id = satellite.get_norad_id()
-    tle_data = satellite.get_tle_data(norad_id)
+    tle_data = satellite.get_tle(norad_id)
     rv_data = satellite.predict_rv(tle_data)
     return(jsonify(rv_data))
