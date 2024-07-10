@@ -6,6 +6,10 @@ import requests
 from datetime import datetime
 from pytz import timezone
 from sgp4.api import Satrec, jday
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
 class Base:
@@ -14,14 +18,15 @@ class Base:
         initialization name and datetime
         """
         self.sat_name = name
+        self.norad_id_url = os.getenv('NORAD_URL')
+        self.tle_url = os.getenv('TLE_URL')
+        self.date_time = None
 
     def get_norad_id(self):
         """
         return norad id
         """
-        url = ("https://celestrak.org/NORAD/elements/gp.php?"
-               "GROUP=active&FORMAT=json")
-        response = requests.get(url)
+        response = requests.get(self.norad_id_url)
         if response.status_code == 200:
             satellites = response.json()
             for satellite in satellites:
@@ -33,8 +38,7 @@ class Base:
         """
         return tle data
         """
-        url = ("https://celestrak.org/NORAD/elements/gp.php?"
-               "CATNR={}".format(norad_cat_id))
+        url = "{}CATNR={}".format(self.tle_url, norad_cat_id)
         response = requests.get(url)
         if response.status_code == 200:
             tle_data = response.text.split("\r")
@@ -46,7 +50,14 @@ class Base:
         line1 = tle_data[1].strip()
         line2 = tle_data[2].strip()
         satellite = Satrec.twoline2rv(line1, line2)
-        utc_time = datetime.now(timezone('UTC'))
+        if date_time:
+            local_zone = timezone('Africa/Cairo')
+            date_time = datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
+            local_date_time = local_zone.localize(date_time)
+            utc_time = local_date_time.astimezone(timezone('UTC'))
+        else:
+            utc_time = timezone('UTC')
+
         year, month, day, hour, minute, sec = (
                 utc_time.year, utc_time.month,
                 utc_time.day, utc_time.hour,
@@ -56,8 +67,11 @@ class Base:
         e, r, v = satellite.sgp4(julien_day, fr)
         if e == 0:
             return({
+                "date": utc_time.date()
+                "time": utc_time.time()
                 "r_vector": {"x": r[0], "y": r[1], "z": r[2]},
                 "v_vector": {"x": v[0], "y": v[1], "z": v[2]}
+                "name": self.sat_name
                 })
         else:
             raise RuntimeError("Error")
