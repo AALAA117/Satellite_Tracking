@@ -3,6 +3,8 @@
 Fetch TLE data from celestrack active satellites api
 """
 import requests
+from sqlalchemy import Column, String
+from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from pytz import timezone
 from sgp4.api import Satrec, jday
@@ -10,9 +12,18 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
+Base = declarative_base()
 
+class Satellite:
+    """
+    BaseModel for Satellites
+    """
+    __tablename__ = 'satellites'
+    name = Column(String(60), primary_key=True)
+    norad_id = Column(Integer, nullable=False)
+    line_1 = Column(String(60), nullable=False)
+    line_2 = Column(String(60), nullable=False)
 
-class Base:
     def __init__(self, name):
         """
         initialization name and datetime
