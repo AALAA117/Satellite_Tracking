@@ -2,7 +2,8 @@
 """
 Module for execution and handling error
 """
-from flask import Flask, make_response, jsonify
+from flask import Flask, make_response, jsonify, render_template
+from api.model import storage
 from api.route import main
 from os import environ
 
@@ -10,6 +11,15 @@ from os import environ
 app = Flask(__name__)
 app.register_blueprint(main)
 
+
+@app.route("/", strict_slashes=False)
+def home():
+    return (render_template("index1.html"))
+
+@app.teardown_appcontext
+def close(error):
+    """close storage"""
+    storage.close()
 
 @app.errorhandler(404)
 def not_found(error):

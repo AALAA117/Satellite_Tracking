@@ -3,7 +3,8 @@
 Fetch TLE data from celestrack active satellites api
 """
 import requests
-from sqlalchemy import Column, String
+import api.model
+from sqlalchemy import Column, String, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from pytz import timezone
@@ -14,21 +15,22 @@ import os
 load_dotenv()
 Base = declarative_base()
 
-class Satellite:
+class Satellite(Base):
     """
     BaseModel for Satellites
     """
     __tablename__ = 'satellites'
-    name = Column(String(60), primary_key=True)
-    norad_id = Column(Integer, nullable=False)
-    line_1 = Column(String(60), nullable=False)
-    line_2 = Column(String(60), nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(60), nullable=False)
+    line_1 = Column(String(70), nullable=False)
+    line_2 = Column(String(70), nullable=False)
+    date_time = None
 
     def __init__(self, name):
         """
         initialization name and datetime
         """
-        self.sat_name = name
+        self.name = name
         self.norad_id_url = os.getenv('NORAD_URL')
         self.tle_url = os.getenv('TLE_URL')
         self.date_time = None
@@ -41,7 +43,7 @@ class Satellite:
         if response.status_code == 200:
             satellites = response.json()
             for satellite in satellites:
-                if satellite["OBJECT_NAME"] == self.sat_name:
+                if satellite["OBJECT_NAME"] == self.name:
                     return(satellite["NORAD_CAT_ID"])
         else:
             return (None)
@@ -58,13 +60,17 @@ class Satellite:
             return (None)
 
     def predict_rv(self, tle_data):
+        """
+        Predict Satellite Positin and Velocity 
+        in Km
+        """
         line1 = tle_data[1].strip()
         line2 = tle_data[2].strip()
         satellite = Satrec.twoline2rv(line1, line2)
         local_zone = timezone('Africa/Cairo')
         if self.date_time:
-            date_time = datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S')
-            local_date_time = local_zone.localize(date_time)
+            self.date_time = datetime.strptime(self.date_time, '%Y-%m-%d %H:%M:%S')
+            local_date_time = local_zone.localize(self.date_time)
             utc_time = local_date_time.astimezone(timezone('UTC'))
         else:
             utc_time = datetime.now(timezone('UTC'))
@@ -80,9 +86,13 @@ class Satellite:
             return ({
                 "a_date": str(utc_time.date()),
                 "a_time": str(utc_time.time()),
-                "name": self.sat_name,
-                "r_vector": {"x": r[0], "y": r[1], "z": r[2]},
-                "v_vector": {"x": v[0], "y": v[1], "z": v[2]}
+                "name": self.name,
+                "r_vector (km)": {"x": r[0], "y": r[1], "z": r[2]},
+                "v_vector (km)": {"x": v[0], "y": v[1], "z": v[2]}
                 })
         else:
             raise RuntimeError("Error")
+        
+    def save(self):
+        """save object"""
+        api.model.storage.new_sat(self)

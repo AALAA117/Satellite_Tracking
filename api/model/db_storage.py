@@ -8,19 +8,21 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from api.model.tle_fetcher import Satellite, Base
 
 class DBStorage:
-    """interaacts with the MySQL database"""
-    SAT_MYSQL_USER = 'sat_track'
-    HBNB_MYSQL_PWD = 'sat_track_pwd'
-    HBNB_MYSQL_HOST = 'localhost'
-    HBNB_MYSQL_DB = 'sat_track_db'
-    self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
+    """interacts with the MySQL database"""
+    def __init__(self):
+        """Instantiate a DBStorage object"""
+        SAT_MYSQL_USER = 'sat_track'
+        SAT_MYSQL_PWD = 'sat_track_pwd'
+        SAT_MYSQL_HOST = 'localhost'
+        SAT_MYSQL_DB = 'sat_track_db'
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
                                       format(SAT_MYSQL_USER,
                                              SAT_MYSQL_PWD,
                                              SAT_MYSQL_HOST,
                                              SAT_MYSQL_DB))
     def get_sat(self, name):
         """Get satellite by name"""
-        return (session.query(Satellite).filter_by(name=name).first())
+        return (self.__session.query(Satellite).filter_by(name=name).first())
     
     def new_sat(self, obj):
         """store new satellites"""
@@ -33,9 +35,10 @@ class DBStorage:
         Session = scoped_session(sess_factory)
         self.__session = Session
 
+    def save(self):
+        """commit all changes of the current database session"""
+        self.__session.commit()
+
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
-
-
-

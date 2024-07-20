@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 from api.route import main
-from api.model.tle_fetcher import Base
+from api.model.tle_fetcher import Satellite
 from flask import abort, jsonify, request
+from api.model import storage
+
 
 @main.route("/active_sat/<name>", methods=["GET"], strict_slashes=False)
 def get_sat(name):
@@ -11,9 +13,17 @@ def get_sat(name):
     if not name:
         abort(404)
 
-    satellite = Base(name)
-    norad_id = satellite.get_norad_id()
-    tle_data = satellite.get_tle(norad_id)
+    satellite = storage.get_sat(name)
+    if not satellite:
+        satellite = Satellite(name)
+        norad_id = satellite.get_norad_id()
+        tle_data = satellite.get_tle(norad_id)
+        satellite.line_1 = tle_data[1].strip()
+        satellite.line_2 = tle_data[2].strip()
+        satellite.save()
+        storage.save()
+    else:
+        tle_data = [None, satellite.line_1, satellite.line_2]
     rv_data = satellite.predict_rv(tle_data)
     return(jsonify(rv_data))
 
@@ -22,19 +32,26 @@ def update_sat(name):
     """
     Update datetime of position and velocity vector
     """
-    satellite = Base(name)
-    norad_id = satellite.get_norad_id()
-    tle_data = satellite.get_tle(norad_id)
-    if name:
-        if not request.get_json():
-            abort(400, description="Not a JSON")
-
-        data = request.get_json()
-        ignore = ["r_vector", "v_vector", "name", "date_time"]
-        for key, value in data.items():
-            if key not in ignore:
-                setattr(satellite, key, value)
-        rv_data = satellite.predict_rv(tle_data)
-        return (jsonify(rv_data))
-    else:
+    if not name:
         abort(404)
+
+    if not request.get_json():
+        abort(400, description="Not a JSON")
+
+    data = request.get_json()
+    satellite = storage.get_sat(name)
+    if not satellite:
+        satellite = Base(name)
+        norad_id = satellite.get_norad_id()
+        tle_data = satellite.get_tle(norad_id)
+        satellite.line_1 = tle_data[1].strip()
+        satellite.line_2 = tle_data[2].strip()
+    else:
+        tle_data = [None, satellite.line_1, satellite.line_2]
+
+    ignore = ["r_vector", "v_vector", "name"]
+    for key, value in data.items():
+        if key not in ignore:
+            setattr(satellite, key, value)
+    rv_data = satellite.predict_rv(tle_data)
+    return (jsonify(rv_data))
