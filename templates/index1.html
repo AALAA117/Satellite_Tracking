@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                <meta charset="UTF-8">
+		<title>API</title>
+        </head>
+        <body>
+		<div>
+		<h1>Satellite Tracking API documentation</h1>
+		<h3>Endpoints</h3>
+		<ul>
+			<li><h4>GET /api/active_sat/&lt;name&gt;</h4></li>
+			<pre>
+			URL: /api/active_sat/&lt;name&gt;
+			Method: GET
+			description: Retrieve the position and velocity of satellite at current time zone using name of satellite
+			Response:
+				404:
+				description: Not Found
+				200:
+				description: successful request
+				scheme:
+				{
+                		"a_date": 2024-7-14,
+                		"a_time": 2:30:15,
+                		"name": STELLA,
+                		"r_vector": {"x": 123.45, "y": 678.90, "z": 234.56},
+                		"v_vector": {"x": 7.89, "y": 6.54, "z": 3.21}
+                		}
+			</pre>
+			<li><h4>PUT /api/active_sat/&lt;name&gt;</h4></li>
+			<pre>
+			URL: /api/active_sat/&lt;name&gt;
+			Method: PUT
+			description: Update the position and velocity of satellite at specified datetime
+			Request:
+				{
+  				"date_time": "2024-07-14 10:00:00"
+				}
+			Response:
+				404:
+				description: Not Found
+				200:
+				description: successful request
+				scheme:
+				{
+                		"a_date": 2024-7-14,
+                		"a_time": 10:00:00,
+                		"name": STELLA,
+                		"r_vector": {"x": 123.45, "y": 678.90, "z": 234.56},
+                		"v_vector": {"x": 7.89, "y": 6.54, "z": 3.21}
+                		}
+			</pre>
+		</ul>
+		</div>
+</html>
