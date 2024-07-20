@@ -6,15 +6,14 @@ import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from api.model.tle_fetcher import Satellite, Base
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class DBStorage:
     """interacts with the MySQL database"""
     def __init__(self):
         """Instantiate a DBStorage object"""
-        SAT_MYSQL_USER = 'sat_track'
-        SAT_MYSQL_PWD = 'sat_track_pwd'
-        SAT_MYSQL_HOST = 'localhost'
-        SAT_MYSQL_DB = 'sat_track_db'
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
                                       format(SAT_MYSQL_USER,
                                              SAT_MYSQL_PWD,
