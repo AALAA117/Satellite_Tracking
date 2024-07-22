@@ -15,3 +15,22 @@ An api service that can be combined with weather service to analyze the satellit
 [Github](https://github.com/AALAA117/Satellite_Tracking)
 
 [Linkedin](https://www.linkedin.com/in/aalaa-mohammed-927a99281/)
+
+# Installation
+
+### Prerequisites:
+
+- Operating System: Linux
+- Python: Version 3.8 or higher
+- Git: For cloning the project repository
+- MySQL: For database setup
+
+### Steps:
+Clone the Repository:
+```
+git clone https://github.com/AALAA117/Satellite_Tracking.
+cd Satellite_Tracking
+```
+
+
+
