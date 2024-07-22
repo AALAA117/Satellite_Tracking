@@ -16,10 +16,14 @@ app.register_blueprint(main)
 def home():
     return (render_template("index1.html"))
 
+
 @app.teardown_appcontext
 def close(error):
     """close storage"""
+
+    # clear session after each request
     storage.close()
+
 
 @app.errorhandler(404)
 def not_found(error):
