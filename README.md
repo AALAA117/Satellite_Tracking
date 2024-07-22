@@ -68,3 +68,6 @@ Aalaa Mohammed is the only contributor at this time
 
 # Related projects
 Here is a [repo](https://github.com/AALAA117/alx-higher_level_programming) that represents my python skills.
+
+# Licensing
+Free to use but please give me credit.
