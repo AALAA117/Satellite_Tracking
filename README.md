@@ -28,9 +28,14 @@ An api service that can be combined with weather service to analyze the satellit
 ### Steps:
 Clone the Repository:
 ```
-git clone https://github.com/AALAA117/Satellite_Tracking.
+git clone https://github.com/AALAA117/Satellite_Tracking
 cd Satellite_Tracking
 ```
-
-
-
+Install Dependencies
+```
+pip install -r requirements.txt
+```
+Configure MySQL Database
+```
+cat setup_mysql_dev.sql | mysql -hlocalhost -uroot -p
+```
