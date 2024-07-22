@@ -51,11 +51,13 @@ curl -X GET http://localhost:5005/api/active_sat/FORTE
 The Satellite Tracking Project is designed to track the positions and velocities of satellites based on their Two-Line Element (TLE) data. Below is a guide on how to use the various features of the project.
 
 - Get Active Satellite Data:
+  
   GET api/active_sat/TIBA-1
   ```
   curl -X GET http://localhost:5005/api/active_sat/TIBA-1
   ```
 - Update Satellite Data:
+  
   PUT /api/update_sat/TIBA-1
 ```
 curl -X PUT http://127.0.0.1:5005/api/active_sat/TIBA-1 -H "Content-Type: application/json" -d '{"date_time": "2024-07-10 11:54:03"}'
