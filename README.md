@@ -39,3 +39,11 @@ Configure MySQL Database
 ```
 cat setup_mysql_dev.sql | mysql -hlocalhost -uroot -p
 ```
+Run the Application
+```
+python3 run.py
+```
+Test the API
+```
+curl -X GET http://localhost:5005/api/active_sat/FORTE
+```
