@@ -62,4 +62,9 @@ The Satellite Tracking Project is designed to track the positions and velocities
 ```
 curl -X PUT http://127.0.0.1:5005/api/active_sat/TIBA-1 -H "Content-Type: application/json" -d '{"date_time": "2024-07-10 11:54:03"}'
 ```
+# Contributing
 
+Aalaa Mohammed is the only contributor at this time
+
+# Related projects
+Here is a [repo](https://github.com/AALAA117/alx-higher_level_programming) that represents my python skills.
