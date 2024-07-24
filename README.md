@@ -15,6 +15,7 @@ An api service that can be combined with weather service to analyze the satellit
 [Github](https://github.com/AALAA117/Satellite_Tracking)
 
 [Linkedin](https://www.linkedin.com/in/aalaa-mohammed-927a99281/)
+[Blog post](https://medium.com/@alaamglal/satellite-tracking-api-4faef6a5132c)
 
 # Installation
 
